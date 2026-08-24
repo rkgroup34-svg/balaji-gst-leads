@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Balaji GST Suvidha Kendra - Lead Management</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f5f7fb;color:#172033}
+header{background:linear-gradient(135deg,#8b0000,#d71920);color:#fff;padding:18px 16px;position:sticky;top:0;z-index:5}
+.brand{font-size:22px;font-weight:800}.sub{font-size:13px;margin-top:4px}.phone{font-weight:700;margin-top:8px}
+nav{display:flex;gap:8px;overflow:auto;margin-top:14px}nav button,.btn{border:0;border-radius:10px;padding:10px 13px;font-weight:700;cursor:pointer}nav button{background:#fff;color:#a30000}
+main{max-width:1100px;margin:auto;padding:16px}.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.card{background:#fff;border-radius:14px;padding:14px;box-shadow:0 2px 10px #0000000d}.num{font-size:25px;font-weight:800}.muted{color:#667085;font-size:12px}
+.section{margin-top:16px}.section h2{font-size:18px;margin:0 0 10px}
+.formgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.full{grid-column:1/-1}input,select,textarea{width:100%;padding:12px;border:1px solid #d7dce5;border-radius:10px;font-size:15px}textarea{min-height:80px;resize:vertical}
+.btn.primary{background:#b40000;color:#fff}.btn.green{background:#12843a;color:#fff}.btn.light{background:#eef1f6;color:#172033}.btn.warn{background:#f59e0b;color:#fff}
+.tablewrap{overflow:auto;background:#fff;border-radius:14px;box-shadow:0 2px 10px #0000000d}table{width:100%;border-collapse:collapse;min-width:850px}th,td{text-align:left;padding:11px;border-bottom:1px solid #edf0f4;font-size:13px}th{background:#fafafa}.badge{display:inline-block;padding:5px 8px;border-radius:20px;font-size:11px;font-weight:700;background:#eef1f6}.bnew{background:#fff3cd}.bint{background:#dbeafe}.bpending{background:#ffedd5}.bpaid{background:#dcfce7}.bready{background:#e0e7ff}
+.modal{display:none;position:fixed;inset:0;background:#0008;z-index:10;padding:20px;overflow:auto}.modalbox{background:#fff;max-width:600px;margin:30px auto;border-radius:16px;padding:18px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.notice{background:#fff7e6;border:1px solid #ffd58a;border-radius:12px;padding:12px;font-size:13px}
+@media(max-width:800px){.grid{grid-template-columns:repeat(2,1fr)}.formgrid{grid-template-columns:1fr}.full{grid-column:auto}}
+</style>
+</head>
+<body>
+<header>
+<div class="brand">Balaji GST Suvidha Kendra</div>
+<div class="sub">Lead Management System • Registration Fee ₹99</div>
+<div class="phone">Mob. 7976081397 • All Services Available</div>
+<nav>
+<button onclick="show('dashboard')">Dashboard</button>
+<button onclick="show('leads')">Leads</button>
+<button onclick="show('add')">+ New Lead</button>
+</nav>
+</header>
+
+<main>
+<section id="dashboard">
+<div class="section">
+<h2>Lead Dashboard</h2>
+<div class="grid">
+<div class="card"><div class="muted">Total Leads</div><div class="num" id="total">0</div></div>
+<div class="card"><div class="muted">New Lead</div><div class="num" id="newc">0</div></div>
+<div class="card"><div class="muted">Interested</div><div class="num" id="intc">0</div></div>
+<div class="card"><div class="muted">₹99 Pending</div><div class="num" id="pendc">0</div></div>
+<div class="card"><div class="muted">₹99 Paid</div><div class="num" id="paidc">0</div></div>
+</div>
+</div>
+<div class="section card">
+<h2>Quick Add Lead</h2>
+<div class="formgrid">
+<input id="qname" placeholder="Customer Name">
+<input id="qmobile" placeholder="Mobile Number">
+<input id="qemail" placeholder="Email Address">
+<input id="qlocation" placeholder="Location">
+<select id="qsource"><option>Instagram</option><option>Facebook</option><option>WhatsApp</option><option>YouTube</option><option>Other</option></select>
+<button class="btn primary" onclick="quickAdd()">Add New Lead</button>
+</div>
+</div>
+<div class="section notice"><b>Process:</b> New Lead → Interested → ₹99 Payment Pending → ₹99 Paid → Ready to Process → Open BO. KYC, company app और आगे का onboarding Company Panel में होगा.</div>
+</section>
+
+<section id="leads" style="display:none">
+<div class="section">
+<h2>All Leads</h2>
+<div class="formgrid">
+<input id="search" class="full" placeholder="Search name / mobile / email / location" oninput="render()">
+</div>
+</div>
+<div class="section tablewrap"><table><thead><tr><th>Customer</th><th>Contact</th><th>Location</th><th>Source</th><th>Status</th><th>Amount</th><th>Action</th></tr></thead><tbody id="tbody"></tbody></table></div>
+</section>
+
+<section id="add" style="display:none">
+<div class="section card">
+<h2>Add New Lead</h2>
+<div class="formgrid">
+<input id="name" placeholder="Customer Name *">
+<input id="mobile" placeholder="Mobile Number *">
+<input id="email" placeholder="Email Address">
+<input id="location" placeholder="Location">
+<select id="source"><option>Instagram</option><option>Facebook</option><option>WhatsApp</option><option>YouTube</option><option>Other</option></select>
+<textarea id="notes" class="full" placeholder="Notes"></textarea>
+<button class="btn primary" onclick="addLead()">Save New Lead</button>
+</div>
+</div>
+</section>
+</main>
+
+<div id="modal" class="modal"><div class="modalbox">
+<h2 id="mtitle">Lead</h2>
+<div id="mdetail"></div>
+<div class="actions" id="mactions"></div>
+<button class="btn light" onclick="closeModal()">Close</button>
+</div></div>
+
+<script>
+const KEY='balaji_gst_leads_v1';
+let leads=JSON.parse(localStorage.getItem(KEY)||'[]');
+const statuses=['New Lead','Interested','₹99 Payment Pending','₹99 Paid','Ready to Process','Open BO'];
+function save(){localStorage.setItem(KEY,JSON.stringify(leads));render();stats()}
+function duplicate(mobile,ignore){return leads.some(x=>x.mobile===mobile && x.id!==ignore)}
+function addLead(){
+ let x={id:Date.now().toString(),name:name.value.trim(),mobile:mobile.value.trim(),email:email.value.trim(),location:location.value.trim(),source:source.value,notes:notes.value.trim(),status:'New Lead',amount:0,paymentId:'',created:new Date().toLocaleString('en-IN')};
+ if(!x.name||!x.mobile){alert('Name और Mobile जरूरी हैं.');return}
+ if(duplicate(x.mobile)){alert('यह mobile number पहले से मौजूद है.');return}
+ leads.unshift(x);save();['name','mobile','email','location','notes'].forEach(i=>document.getElementById(i).value='');show('leads')
+}
+function quickAdd(){
+ name.value=qname.value;mobile.value=qmobile.value;email.value=qemail.value;location.value=qlocation.value;source.value=qsource.value;addLead()
+}
+function stats(){
+ total.textContent=leads.length;newc.textContent=leads.filter(x=>x.status==='New Lead').length;intc.textContent=leads.filter(x=>x.status==='Interested').length;pendc.textContent=leads.filter(x=>x.status==='₹99 Payment Pending').length;paidc.textContent=leads.filter(x=>x.status==='₹99 Paid').length
+}
+function badge(s){let c=s==='New Lead'?'bnew':s==='Interested'?'bint':s==='₹99 Payment Pending'?'bpending':s==='₹99 Paid'?'bpaid':s==='Ready to Process'?'bready':'';return `<span class="badge ${c}">${s}</span>`}
+function render(){
+ let q=(search?.value||'').toLowerCase();let arr=leads.filter(x=>(x.name+' '+x.mobile+' '+x.email+' '+x.location).toLowerCase().includes(q));
+ tbody.innerHTML=arr.map(x=>`<tr><td><b>${esc(x.name)}</b><br><span class="muted">${esc(x.created)}</span></td><td>${esc(x.mobile)}<br>${esc(x.email||'-')}</td><td>${esc(x.location||'-')}</td><td>${esc(x.source)}</td><td>${badge(x.status)}</td><td>${x.amount?'₹'+x.amount:'—'}</td><td><button class="btn light" onclick="openLead('${x.id}')">Open</button></td></tr>`).join('')||'<tr><td colspan="7">No leads found.</td></tr>'
+}
+function openLead(id){
+ let x=leads.find(a=>a.id===id);if(!x)return;
+ mtitle.textContent=x.name;mdetail.innerHTML=`<p><b>Mobile:</b> ${esc(x.mobile)}<br><b>Email:</b> ${esc(x.email||'-')}<br><b>Location:</b> ${esc(x.location||'-')}<br><b>Source:</b> ${esc(x.source)}<br><b>Status:</b> ${badge(x.status)}<br><b>Notes:</b> ${esc(x.notes||'-')}<br><b>Payment ID:</b> ${esc(x.paymentId||'-')}</p>`;
+ let a='';
+ if(x.status==='New Lead')a+=`<button class="btn primary" onclick="setStatus('${id}','Interested')">Mark Interested</button>`;
+ if(x.status==='Interested')a+=`<button class="btn warn" onclick="setStatus('${id}','₹99 Payment Pending')">₹99 Payment Pending</button>`;
+ if(x.status==='₹99 Payment Pending')a+=`<button class="btn green" onclick="paid('${id}')">₹99 Paid</button>`;
+ if(x.status==='₹99 Paid')a+=`<button class="btn primary" onclick="setStatus('${id}','Ready to Process')">Ready to Process</button>`;
+ if(x.status==='Ready to Process')a+=`<button class="btn primary" onclick="openBO('${id}')">Open BO</button>`;
+ a+=`<button class="btn light" onclick="wa('${id}')">WhatsApp</button><button class="btn light" onclick="editNotes('${id}')">Add Note</button>`;
+ mactions.innerHTML=a;modal.style.display='block'
+}
+function setStatus(id,s){let x=leads.find(a=>a.id===id);x.status=s;save();openLead(id)}
+function paid(id){let p=prompt('₹99 payment ID / UTR दर्ज करें:');if(!p)return;let x=leads.find(a=>a.id===id);x.amount=99;x.paymentId=p;x.status='₹99 Paid';save();openLead(id)}
+function openBO(id){let x=leads.find(a=>a.id===id);x.status='Open BO';save();alert('अब Company Panel/BO में इस customer की details process करें.');openLead(id)}
+function wa(id){let x=leads.find(a=>a.id===id);let text=`Namaste ${x.name}, Balaji GST Suvidha Kendra registration ke liye ₹99 process hai. Aage ki jankari ke liye humse sampark karein.`;location.href='https://wa.me/91'+x.mobile.replace(/\D/g,'')+'?text='+encodeURIComponent(text)}
+function editNotes(id){let x=leads.find(a=>a.id===id);let n=prompt('Lead note:',x.notes||'');if(n!==null){x.notes=n;save();openLead(id)}}
+function closeModal(){modal.style.display='none'}
+function show(id){['dashboard','leads','add'].forEach(x=>document.getElementById(x).style.display=x===id?'block':'none');if(id==='leads')render();stats();scrollTo(0,0)}
+function esc(v){return String(v||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+render();stats();
+</script>
+</body></html>
